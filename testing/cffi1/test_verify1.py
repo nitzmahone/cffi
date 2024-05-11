@@ -728,7 +728,12 @@ def test_full_enum():
     lib = ffi.verify("enum ee { EE1, EE2, EE3 };")
     assert [lib.EE1, lib.EE2, lib.EE3] == [0, 1, 2]
 
+
 def test_enum_usage():
+    # FIXME: fails on newer MacOS clang:   verify214.c:603:32: error: performing pointer subtraction with a null pointer has undefined behavior [-Werror,-Wnull-pointer-subtraction]
+    #     { "x", ((char *)&((sp)0)->x) - (char *)0,
+    #                                  ^ ~~~~~~~~~
+
     ffi = FFI()
     ffi.cdef("enum ee { EE1,EE2 }; typedef struct { enum ee x; } *sp;")
     lib = ffi.verify("enum ee { EE1,EE2 }; typedef struct { enum ee x; } *sp;")
@@ -1717,6 +1722,10 @@ def test_include_enum():
     assert res == 2
 
 def test_named_pointer_as_argument():
+    # FIXME: fails on newer MacOS clang:   verify214.c:603:32: error: performing pointer subtraction with a null pointer has undefined behavior [-Werror,-Wnull-pointer-subtraction]
+    #     { "x", ((char *)&((sp)0)->x) - (char *)0,
+    #                                  ^ ~~~~~~~~~
+
     ffi = FFI()
     ffi.cdef("typedef struct { int x; } *mystruct_p;\n"
              "mystruct_p ff5a(mystruct_p);")
