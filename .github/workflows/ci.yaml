@@ -114,6 +114,23 @@ jobs:
           - spec: cp313-musllinux_i686
             cibw_version: https://github.com/nitzmahone/cibuildwheel/archive/refs/heads/py313_support.zip
   
+          - spec: cp39-musllinux_aarch64
+            omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
+          
+          - spec: cp310-musllinux_aarch64
+            omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
+
+          - spec: cp311-musllinux_aarch64
+            omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
+
+          - spec: cp312-musllinux_aarch64
+            omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
+  
+          - spec: cp313-musllinux_aarch64
+            cibw_version: https://github.com/nitzmahone/cibuildwheel/archive/refs/heads/py313_support.zip
+            #musllinux_img: quay.io/pypa/musllinux_1_1_aarch64:latest
+            omit: ${{ env.skip_slow_jobs}}
+  
           - spec: cp38-manylinux_aarch64
             foreign_arch: true
             test_args: '{project}/src/c'
