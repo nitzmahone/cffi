@@ -15,7 +15,7 @@ skipped_entries = []
 def _filter_omit_entries(value):
     if isinstance(value, MutableMapping):
         if (omit_value := value.pop('omit', ...)) is not ...:
-            if omit_value is True:
+            if omit_value is True or str(omit_value).lower().strip() == 'true':
                 print(f'omitting {value} from matrix')
                 skipped_entries.append(value)
                 return ...
