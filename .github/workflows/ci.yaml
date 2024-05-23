@@ -9,24 +9,24 @@ on:
   workflow_dispatch:
     inputs:
       skip_artifact_upload:
+        description: Upload all job artifacts?
         type: boolean
         default: true
       skip_ci_redundant_jobs:
+        description: Skip CI redundant jobs?
         type: boolean
         default: true
       skip_slow_jobs:
+        description: Skip slow/emulated jobs?
         type: boolean
         default: true
 
 env:
-  is_release_job: false
-  skip_ci_redundant_jobs: true # ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_ci_redundant_jobs) || (github.event_name == 'pull_request' || github.event_name == 'push') }}
-  skip_slow_jobs: true  # ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_slow_jobs) || (github.event_name == 'pull_request' || github.event_name == 'push') }}
-  skip_artifact_upload: false # ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_artifact_upload) || github.event_name != 'workflow_dispatch' }}
+  skip_ci_redundant_jobs: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_ci_redundant_jobs) || (github.event_name == 'pull_request' || github.event_name == 'push') }}
+  skip_slow_jobs: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_slow_jobs) || (github.event_name == 'pull_request' || github.event_name == 'push') }}
+  skip_artifact_upload: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_artifact_upload) || github.event_name != 'workflow_dispatch' }}
 
 jobs:
-  # FIXME: update wheel jobs to build from this sdist artifact
-  # FIXME: update to upload-artifact v4 and add an artifact merge job
   python_sdist:
     runs-on: ubuntu-22.04
     steps:
@@ -534,7 +534,7 @@ jobs:
       if: ${{ env.skip_artifact_upload != 'true' }}
 
   merge_artifacts:
-    needs: [python_sdist, linux, macos, windows]  # FIXME: add back others
+    needs: [python_sdist, linux, macos, windows]
     runs-on: ubuntu-22.04
     steps:
     - name: merge all artifacts
@@ -544,17 +544,13 @@ jobs:
         delete-merged: true
       if: ${{ env.skip_artifact_upload != 'true' }}
 
-#
-#  check:
-#    if: always()
-#    needs:
-#    - python_sdist
-#    - linux
-#    - macos
-#    - windows
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: Verify all previous jobs succeeded (provides a single check to sample for gating purposes)
-#      uses: re-actors/alls-green@release/v1
-#      with:
-#        jobs: ${{ toJSON(needs) }}
+
+  check:
+    if: always()
+    needs: [python_sdist, linux, macos, windows, merge_artifacts]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Verify all previous jobs succeeded (provides a single check to sample for gating purposes)
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}
