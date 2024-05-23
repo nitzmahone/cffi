@@ -375,7 +375,7 @@ jobs:
             run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
 
   macos:
-    needs: make_macos_matrix
+    needs: [python_sdist, make_macos_matrix]
     defaults:
       run:
         shell: ${{ matrix.run_wrapper || 'bash --noprofile --norc -eo pipefail {0}' }}
@@ -488,7 +488,7 @@ jobs:
             omit: ${{ env.skip_ci_redundant_jobs }}
 
   windows:
-    needs: make_windows_matrix
+    needs: [python_sdist, make_windows_matrix]
     runs-on: windows-2022
     strategy:
       fail-fast: false
