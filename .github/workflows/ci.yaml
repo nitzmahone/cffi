@@ -285,9 +285,9 @@ jobs:
         CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.manylinux_img || '' }}
         CIBW_MANYLINUX_PPC64LE_IMAGE: ${{ matrix.manylinux_img || '' }}
         CIBW_MANYLINUX_S390X_IMAGE: ${{ matrix.manylinux_img || '' }}
-        CIBW_MUSLLINUX_X86_64_IMAGE: ${{ matrix.musllinux_img || '' }}
-        CIBW_MUSLLINUX_I686_IMAGE: ${{ matrix.musllinux_img || '' }}
-        CIBW_MUSLLINUX_AARCH64_IMAGE: ${{ matrix.musllinux_img || '' }}
+        CIBW_MUSLLINUX_X86_64_IMAGE: ${{ matrix.musllinux_img || 'musllinux_1_1' }}
+        CIBW_MUSLLINUX_I686_IMAGE: ${{ matrix.musllinux_img || 'musllinux_1_1' }}
+        CIBW_MUSLLINUX_AARCH64_IMAGE: ${{ matrix.musllinux_img || 'musllinux_1_1' }}
         CIBW_PRERELEASE_PYTHONS: 'True'
         CIBW_TEST_REQUIRES: pytest setuptools  # 3.12+ no longer includes distutils, just always ensure setuptools is present
         CIBW_TEST_COMMAND: PYTHONUNBUFFERED=1 python -m pytest ${{ matrix.test_args || '{project}' }}  # default to test all
@@ -312,200 +312,229 @@ jobs:
         if-no-files-found: error
       if: ${{ env.skip_artifact_upload != 'true' }}
 
-#  make_macos_matrix:
-#    runs-on: ubuntu-22.04
-#    outputs:
-#      matrix_json: ${{ steps.make_matrix.outputs.matrix_json }}
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: make a matrix
-#      id: make_matrix
-#      uses: ./.github/actions/dynamatrix
-#      with:
-#        matrix_yaml: |
-#          include:
-#          # build for x86_64 under the default hosted macOS 10.x x86_64 runner
-#          - spec: cp38-macosx_x86_64
-#            runs_on: [macos-13]
-#
-#          - spec: cp39-macosx_x86_64
-#            runs_on: [macos-13]
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp310-macosx_x86_64
-#            runs_on: [macos-13]
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp311-macosx_x86_64
-#            runs_on: [macos-13]
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp312-macosx_x86_64
-#            runs_on: [macos-13]
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp313-macosx_x86_64
-#            runs_on: [macos-13]
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#           # FIXME: ? cp38-macosx_arm64 requires special handling and fails some test_zdist tests under cibw 2.1.2, skip it (so Apple's XCode python3 won't have a wheel)
-#          - spec: cp39-macosx_arm64
-#            deployment_target: '11.0'
-#            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp310-macosx_arm64
-#            deployment_target: '11.0'
-#            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
-#            omit: ${{ env.skip_ci_redundant_jobs}}
-#
-#          - spec: cp311-macosx_arm64
-#            deployment_target: '11.0'
-#            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp312-macosx_arm64
-#            deployment_target: '11.0'
-#            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp313-macosx_arm64
-#            deployment_target: '11.0'
-#            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
-#
-#  macos:
-#    needs: make_macos_matrix
-#    defaults:
-#      run:
-#        shell: ${{ matrix.run_wrapper || 'bash --noprofile --norc -eo pipefail {0}' }}
-#    runs-on: ${{ matrix.runs_on || 'macos-14' }}
-#    strategy:
-#      fail-fast: false
-#      matrix: ${{ fromJSON(needs.make_macos_matrix.outputs.matrix_json) }}
-#
-#    steps:
-#    - name: clone repo
-#      uses: actions/checkout@v4
-#
-#    - name: install python
-#      uses: actions/setup-python@v5
-#      with:
-#        python-version: '3.11'  # as of 2024-05, this has to be < 3.12 since the macos-13 runner image's
-#                                # built-in virtualenv/pip are pinned to busted versions that fail on newer Pythons
-#
-#    - name: build wheel prereqs
-#      run: |
-#        python3 -m pip install --user --upgrade "${{ matrix.cibw_version || 'cibuildwheel' }}"
-#        brew uninstall --ignore-dependencies libffi || true
-#
-#    - name: build/test wheels
-#      env:
-#        CIBW_BUILD: ${{ matrix.spec }}
-#        CIBW_PRERELEASE_PYTHONS: 'True'
-#        CIBW_TEST_REQUIRES: pytest setuptools
-#        CIBW_TEST_COMMAND: pip install pip --upgrade; cd {project}; PYTHONUNBUFFERED=1 pytest
-#      run: |
-#        if [[ -n "${{ matrix.deployment_target || '' }}" ]]
-#        then
-#            export MACOSX_DEPLOYMENT_TARGET="${{ matrix.deployment_target || '' }}"
-#        fi
-#
-#        if [[ -n "${{ matrix.sdkroot || '' }}" ]]
-#        then
-#            export SDKROOT="${{ matrix.sdkroot || '' }}"
-#        fi
-#
-#        python3 -m cibuildwheel --output-dir dist
-#
-#    - name: upload artifact
-#      uses: actions/upload-artifact@v3
-#      with:
-#        path: dist
-#        if-no-files-found: error
-#      if: ${{ ! env.skip_artifact_upload }}
-#
-#
-#  make_windows_matrix:
-#    runs-on: ubuntu-22.04
-#    outputs:
-#      matrix_json: ${{ steps.make_matrix.outputs.matrix_json }}
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: make a matrix
-#      id: make_matrix
-#      uses: ./.github/actions/dynamatrix
-#      with:
-#        matrix_yaml: |
-#          include:
-#          - spec: cp38-win_amd64
-#            # omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp39-win_amd64
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp310-win_amd64
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp311-win_amd64
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp312-win_amd64
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp313-win_amd64
-#            # omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp38-win32
-#            # omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp39-win32
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp310-win32
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp311-win32
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp312-win32
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#          - spec: cp313-win32
-#            omit: ${{ env.skip_ci_redundant_jobs }}
-#
-#  windows:
-#    needs: make_windows_matrix
-#    runs-on: windows-2022
-#    strategy:
-#      fail-fast: false
-#      matrix: ${{ fromJSON(needs.make_windows_matrix.outputs.matrix_json) }}
-#
-#    steps:
-#    - name: clone repo
-#      uses: actions/checkout@v4
-#    - name: build/test wheels
-#      env:
-#        CIBW_BUILD: ${{ matrix.spec }}
-#        CIBW_PRERELEASE_PYTHONS: 'True'
-#        CIBW_TEST_REQUIRES: pytest setuptools
-#        CIBW_TEST_COMMAND: 'python -m pytest {project}/src/c'
-#        # FIXME: /testing takes ~45min on Windows and has some failures...
-#        # CIBW_TEST_COMMAND='python -m pytest {project}/src/c {project}/testing'
-#      run: |
-#        python -m pip install --upgrade pip
-#        pip install "${{ matrix.cibw_version || 'cibuildwheel'}}"
-#        python -m cibuildwheel --output-dir dist .
-#      shell: bash
-#
-#    - name: upload artifacts
-#      uses: actions/upload-artifact@v3
-#      with:
-#        path: dist
-#        if-no-files-found: error
-#      if: ${{ ! env.skip_artifact_upload }}
+  make_macos_matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix_json: ${{ steps.make_matrix.outputs.matrix_json }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: make a matrix
+      id: make_matrix
+      uses: ./.github/actions/dynamatrix
+      with:
+        matrix_yaml: |
+          include:
+          # build for x86_64 under the default hosted macOS 10.x x86_64 runner
+          - spec: cp38-macosx_x86_64
+            runs_on: [macos-13]
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp39-macosx_x86_64
+            runs_on: [macos-13]
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp310-macosx_x86_64
+            runs_on: [macos-13]
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp311-macosx_x86_64
+            runs_on: [macos-13]
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp312-macosx_x86_64
+            runs_on: [macos-13]
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp313-macosx_x86_64
+            runs_on: [macos-13]
+            # omit: ${{ env.skip_ci_redundant_jobs }}
+
+           # FIXME: ? cp38-macosx_arm64 requires special handling and fails some test_zdist tests under cibw 2.1.2, skip it (so Apple's XCode python3 won't have a wheel)
+          - spec: cp39-macosx_arm64
+            deployment_target: '11.0'
+            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp310-macosx_arm64
+            deployment_target: '11.0'
+            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
+            omit: ${{ env.skip_ci_redundant_jobs}}
+
+          - spec: cp311-macosx_arm64
+            deployment_target: '11.0'
+            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp312-macosx_arm64
+            deployment_target: '11.0'
+            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp313-macosx_arm64
+            deployment_target: '11.0'
+            run_wrapper: arch -arm64 bash --noprofile --norc -eo pipefail {0}
+
+  macos:
+    needs: make_macos_matrix
+    defaults:
+      run:
+        shell: ${{ matrix.run_wrapper || 'bash --noprofile --norc -eo pipefail {0}' }}
+    runs-on: ${{ matrix.runs_on || 'macos-14' }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.make_macos_matrix.outputs.matrix_json) }}
+
+    steps:
+    - name: fetch sdist artifact
+      id: fetch_sdist
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build_sdist.outputs.artifact_name }}
+
+    - name: install python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'  # as of 2024-05, this has to be < 3.12 since the macos-13 runner image's
+                                # built-in virtualenv/pip are pinned to busted versions that fail on newer Pythons
+
+    - name: build wheel prereqs
+      run: |
+        python3 -m pip install --user --upgrade "${{ matrix.cibw_version || 'cibuildwheel' }}"
+        brew uninstall --ignore-dependencies libffi || true
+
+    - name: build/test wheels
+      id: build
+      env:
+        CIBW_BUILD: ${{ matrix.spec }}
+        CIBW_PRERELEASE_PYTHONS: 'True'
+        CIBW_TEST_REQUIRES: pytest setuptools
+        CIBW_TEST_COMMAND: pip install pip --upgrade; cd {project}; PYTHONUNBUFFERED=1 pytest
+      run: |
+        set -eux
+        
+        mkdir cffi
+        
+        tar zxf ${{ steps.fetch_sdist.outputs.download-path }}/cffi*.tar.gz/cffi*.tar.gz --strip-components=1 -C cffi
+        
+        if [[ -n "${{ matrix.deployment_target || '' }}" ]]
+        then
+            export MACOSX_DEPLOYMENT_TARGET="${{ matrix.deployment_target || '' }}"
+        fi
+
+        if [[ -n "${{ matrix.sdkroot || '' }}" ]]
+        then
+            export SDKROOT="${{ matrix.sdkroot || '' }}"
+        fi
+
+        python3 -m cibuildwheel --output-dir dist cffi
+        
+        echo "artifact_name=$(ls ./dist/)" >> "$GITHUB_OUTPUT"
+
+    - name: upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.artifact_name }}
+        path: dist/*.whl
+        if-no-files-found: error
+      if: ${{ env.skip_artifact_upload != 'true' }}
+
+
+  make_windows_matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix_json: ${{ steps.make_matrix.outputs.matrix_json }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: make a matrix
+      id: make_matrix
+      uses: ./.github/actions/dynamatrix
+      with:
+        matrix_yaml: |
+          include:
+          - spec: cp38-win_amd64
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp39-win_amd64
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp310-win_amd64
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp311-win_amd64
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp312-win_amd64
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp313-win_amd64
+            # omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp38-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp39-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp310-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp311-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp312-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+          - spec: cp313-win32
+            omit: ${{ env.skip_ci_redundant_jobs }}
+
+  windows:
+    needs: make_windows_matrix
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.make_windows_matrix.outputs.matrix_json) }}
+
+    steps:
+    - name: fetch sdist artifact
+      id: fetch_sdist
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build_sdist.outputs.artifact_name }}
+
+    - name: build/test wheels
+      id: build
+      env:
+        CIBW_BUILD: ${{ matrix.spec }}
+        CIBW_PRERELEASE_PYTHONS: 'True'
+        CIBW_TEST_REQUIRES: pytest setuptools
+        CIBW_TEST_COMMAND: 'python -m pytest {project}/src/c'
+        # FIXME: /testing takes ~45min on Windows and has some failures...
+        # CIBW_TEST_COMMAND='python -m pytest {project}/src/c {project}/testing'
+      run: |
+        set -eux
+        
+        mkdir cffi
+        
+        tar zxf ${{ steps.fetch_sdist.outputs.download-path }}/cffi*.tar.gz/cffi*.tar.gz --strip-components=1 -C cffi
+        
+        python -m pip install --upgrade pip
+        pip install "${{ matrix.cibw_version || 'cibuildwheel'}}"
+        python -m cibuildwheel --output-dir dist cffi
+        
+        echo "artifact_name=$(ls ./dist/)" >> "$GITHUB_OUTPUT"
+
+      shell: bash
+
+    - name: upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.artifact_name }}
+        path: dist/*.whl
+        if-no-files-found: error
+      if: ${{ env.skip_artifact_upload != 'true' }}
 
   merge_artifacts:
-    needs: [python_sdist, linux]  # FIXME: add back others
+    needs: [python_sdist, linux, macos, windows]  # FIXME: add back others
     runs-on: ubuntu-22.04
     steps:
     - name: merge all artifacts
