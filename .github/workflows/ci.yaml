@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       skip_artifact_upload:
-        description: Upload all job artifacts?
+        description: Skip (most) job artifact uploads?
         type: boolean
         default: true
       skip_ci_redundant_jobs:
@@ -132,117 +132,117 @@ jobs:
   
           - spec: cp39-musllinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
           
           - spec: cp310-musllinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
 
           - spec: cp311-musllinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
 
           - spec: cp312-musllinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_ci_redundant_jobs || env.skip_slow_jobs }}
   
           - spec: cp313-musllinux_aarch64
             foreign_arch: true
-            # test_args: '{project}/src/c'
+            # test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs}}
   
           - spec: cp38-manylinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
 
           - spec: cp39-manylinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp310-manylinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp311-manylinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp312-manylinux_aarch64
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
   
           - spec: cp313-manylinux_aarch64
             foreign_arch: true
-            # test_args: '{project}/src/c'
+            # test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
   
           - spec: cp38-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
 
           - spec: cp39-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp310-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp311-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp312-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp313-manylinux_ppc64le
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
   
           - spec: cp38-manylinux_s390x
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
 
           - spec: cp39-manylinux_s390x
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp310-manylinux_s390x
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp311-manylinux_s390x
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp312-manylinux_s390x
             foreign_arch: true
-            test_args: '{project}/src/c'
+            test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }}
 
           - spec: cp313-manylinux_s390x
             foreign_arch: true
-            # test_args: '{project}/src/c'
+            # test_args: '{package}/src/c'
             omit: ${{ env.skip_slow_jobs }}
 
 
@@ -400,7 +400,7 @@ jobs:
     - name: build wheel prereqs
       run: |
         python3 -m pip install --user --upgrade "${{ matrix.cibw_version || 'cibuildwheel' }}"
-        brew uninstall --ignore-dependencies libffi || true
+        brew uninstall --ignore-dependencies libffi 2>&1 || true
 
     - name: build/test wheels
       id: build
