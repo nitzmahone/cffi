@@ -77,9 +77,9 @@ jobs:
           - { spec: cp311-manylinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-manylinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-manylinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }          
-          - { spec: cp313t-manylinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-manylinux_x86_64, arch: x86_64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-manylinux_x86_64, arch: x86_64, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-manylinux_x86_64, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-manylinux_x86_64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
           # x86_64 musllinux
           - { spec: cp39-musllinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
@@ -87,9 +87,9 @@ jobs:
           - { spec: cp311-musllinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-musllinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-musllinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-musllinux_x86_64, arch: x86_64, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-musllinux_x86_64, arch: x86_64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-musllinux_x86_64, arch: x86_64, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-musllinux_x86_64, arch: x86_64, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-musllinux_x86_64, arch: x86_64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
           # i686 manylinux
           - { spec: cp39-manylinux_i686, arch: i686, omit: ${{ env.skip_ci_redundant_jobs }} }
@@ -97,7 +97,7 @@ jobs:
           - { spec: cp311-manylinux_i686, arch: i686, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-manylinux_i686, arch: i686, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-manylinux_i686, arch: i686 }
-          - { spec: cp313t-manylinux_i686, arch: i686 }
+          - { spec: cp313t-manylinux_i686, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', arch: i686 }
           # omit i686 releases > 3.13
 
           # i686 musllinux
@@ -112,9 +112,9 @@ jobs:
           - { spec: cp311-manylinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-manylinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-manylinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-manylinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-manylinux_aarch64, arch: aarch64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-manylinux_aarch64, arch: aarch64, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-manylinux_aarch64, arch: aarch64, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-manylinux_aarch64, arch: aarch64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
             # aarch64 musllinux
           - { spec: cp39-musllinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
@@ -122,9 +122,9 @@ jobs:
           - { spec: cp311-musllinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-musllinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-musllinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-musllinux_aarch64, arch: aarch64, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-musllinux_aarch64, arch: aarch64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-musllinux_aarch64, arch: aarch64, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-musllinux_aarch64, arch: aarch64, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-musllinux_aarch64, arch: aarch64, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
           # ppc64le manylinux
           - { spec: cp39-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs }} }
@@ -132,9 +132,9 @@ jobs:
           - { spec: cp311-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp312-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp313-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-manylinux_ppc64le, arch: ppc64le, test_args: '{package}/src/c ', test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp314-manylinux_ppc64le, arch: ppc64le, omit: ${{ env.skip_slow_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-manylinux_ppc64le, arch: ppc64le, omit: ${{ env.skip_slow_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-manylinux_ppc64le, arch: ppc64le, omit: ${{ env.skip_slow_jobs }}, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
           # s390x manylinux
           - { spec: cp39-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs }} }
@@ -142,9 +142,9 @@ jobs:
           - { spec: cp311-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp312-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp313-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-manylinux_s390x, arch: s390x, test_args: '{package}/src/c', test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_slow_jobs || env.skip_ci_redundant_jobs }} }
           - { spec: cp314-manylinux_s390x, arch: s390x, omit: ${{ env.skip_slow_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-manylinux_s390x, arch: s390x, omit: ${{ env.skip_slow_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-manylinux_s390x, arch: s390x, omit: ${{ env.skip_slow_jobs }}, test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
   linux:
     needs: [python_sdist, make_linux_matrix]
@@ -191,7 +191,7 @@ jobs:
         CIBW_MUSLLINUX_AARCH64_IMAGE: ${{ matrix.musllinux_img || 'musllinux_1_2' }}
         CIBW_ENABLE: cpython-prerelease cpython-freethreading
         CIBW_TEST_REQUIRES: pytest setuptools  # 3.12+ no longer includes distutils, just always ensure setuptools is present
-        CIBW_TEST_COMMAND: PYTHONUNBUFFERED=1 python -m pytest ${{ matrix.test_args || '{project}' }}  # default to test all
+        CIBW_TEST_COMMAND: PYTHONUNBUFFERED=1 python ${{ matrix.test_python_args || '' }} -m pytest ${{ matrix.test_args || '{project}' }}  # default to test all
       run: |
         set -eux
 
@@ -231,9 +231,9 @@ jobs:
           - { spec: cp311-macosx_x86_64, runs_on: [macos-13], omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-macosx_x86_64, runs_on: [macos-13], omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-macosx_x86_64, runs_on: [macos-13], omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-macosx_x86_64, runs_on: [macos-13], omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-macosx_x86_64, runs_on: [macos-13], test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-macosx_x86_64, runs_on: [macos-13], cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-macosx_x86_64, runs_on: [macos-13], cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-macosx_x86_64, runs_on: [macos-13], test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
           # arm64 macos
           - { spec: cp39-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', omit: ${{ env.skip_ci_redundant_jobs }} }
@@ -241,9 +241,9 @@ jobs:
           - { spec: cp311-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-macosx_arm64, deployment_target: '11.0', run_wrapper: 'arch -arm64 bash --noprofile --norc -eo pipefail {0}', test_python_args: -W 'error:The global interpreter lock:RuntimeWarning', cibw_version: cibuildwheel~=3.0b1 }
 
   macos:
     needs: [python_sdist, make_macos_matrix]
@@ -280,7 +280,7 @@ jobs:
         CIBW_BUILD: ${{ matrix.spec }}
         CIBW_ENABLE: "cpython-prerelease cpython-freethreading"
         CIBW_TEST_REQUIRES: pytest setuptools
-        CIBW_TEST_COMMAND: pip install pip --upgrade; cd {project}; PYTHONUNBUFFERED=1 pytest
+        CIBW_TEST_COMMAND: python3 -m pip install pip --upgrade; cd {project}; PYTHONUNBUFFERED=1 python3 ${{ matrix.test_python_args || '' }} -m pytest
         MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment_target || '10.13' }}
         SDKROOT: ${{ matrix.sdkroot || 'macosx' }}
       run: |
@@ -321,9 +321,9 @@ jobs:
           - { spec: cp311-win_amd64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-win_amd64, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-win_amd64, omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-win_amd64, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-win_amd64, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-win_amd64, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-win_amd64, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-win_amd64, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", cibw_version: cibuildwheel~=3.0b1 }
           
           # x86 windows
           - { spec: cp39-win32, omit: ${{ env.skip_ci_redundant_jobs }} }
@@ -331,17 +331,17 @@ jobs:
           - { spec: cp311-win32, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp312-win32, omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp313-win32, omit: ${{ env.skip_ci_redundant_jobs }} }
-          - { spec: cp313t-win32, omit: ${{ env.skip_ci_redundant_jobs }} }
+          - { spec: cp313t-win32, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", omit: ${{ env.skip_ci_redundant_jobs }} }
           - { spec: cp314-win32, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-win32, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-win32, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", cibw_version: cibuildwheel~=3.0b1 }
 
           # arm64 windows
           - { spec: cp311-win_arm64, runs_on: windows-11-arm, omit: ${{ env.skip_ci_redundant_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
           - { spec: cp312-win_arm64, runs_on: windows-11-arm, omit: ${{ env.skip_ci_redundant_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
           - { spec: cp313-win_arm64, runs_on: windows-11-arm, omit: ${{ env.skip_ci_redundant_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp313t-win_arm64, runs_on: windows-11-arm, omit: ${{ env.skip_ci_redundant_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp313t-win_arm64, runs_on: windows-11-arm, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", omit: ${{ env.skip_ci_redundant_jobs }}, cibw_version: cibuildwheel~=3.0b1 }
           - { spec: cp314-win_arm64, runs_on: windows-11-arm, cibw_version: cibuildwheel~=3.0b1 }
-          - { spec: cp314t-win_arm64, runs_on: windows-11-arm, cibw_version: cibuildwheel~=3.0b1 }
+          - { spec: cp314t-win_arm64, runs_on: windows-11-arm, test_python_args: -W "error:The global interpreter lock:RuntimeWarning", cibw_version: cibuildwheel~=3.0b1 }
 
   windows:
     needs: [python_sdist, make_windows_matrix]
@@ -368,7 +368,7 @@ jobs:
         CIBW_BUILD: ${{ matrix.spec }}
         CIBW_ENABLE: "cpython-prerelease cpython-freethreading"
         CIBW_TEST_REQUIRES: pytest setuptools
-        CIBW_TEST_COMMAND: ${{ matrix.test_cmd || 'python -m pytest {package}/src/c' }}
+        CIBW_TEST_COMMAND: python ${{ matrix.test_python_args || '' }} -m pytest ${{ matrix.test_args || '{package}/src/c' }}
         # FIXME: /testing takes ~45min on Windows and has some failures...
         # CIBW_TEST_COMMAND='python -m pytest {package}/src/c {package}/testing'
       run: |
